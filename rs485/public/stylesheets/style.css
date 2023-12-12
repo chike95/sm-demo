@@ -1,8 +1,31 @@
 body {
-  padding: 50px;
+  padding: 180px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
 a {
   color: #00B7FF;
+}
+
+.control {
+  height: 600px;
+  background-color: #ccd;
+}
+
+.control .equimentList {
+  height: 320px;
+}
+
+.show {
+  height: 600px;
+  background-color: #cca;
+}
+
+.cmd {
+  height: 200px;
+  background-color: #ccc;
+}
+
+.baseArgument {
+  text-align: right;
 }

@@ -87,4 +87,8 @@ function onListening() {
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
+
+  // 打印http服务器信息
+  var addr = server.address();
+  console.log("HTTP服务器启动：", addr)
 }
