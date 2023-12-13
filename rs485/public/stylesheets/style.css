@@ -13,7 +13,7 @@ a {
 }
 
 .control .equimentList {
-  height: 320px;
+  height: 340px;
 }
 
 .show {
@@ -22,6 +22,8 @@ a {
 }
 
 .cmd {
+  overflow-y: scroll;
+  margin: 10px;
   height: 200px;
   background-color: #ccc;
 }
