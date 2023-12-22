@@ -1,5 +1,5 @@
 function addTableData(equipment, index) {
-    console.log(equipment);
+    // console.log(equipment);
     // 给table添加数据
     var tbody = document.createElement('tbody');
     tbody.className = 'equipment-table-item equipment-table-item' + index;
@@ -9,10 +9,10 @@ function addTableData(equipment, index) {
     var td2 = document.createElement('td');
     var td3 = document.createElement('td');
     var td4 = document.createElement('td');
-    td1.innerText = equipment.Client_IP_address;
-    td2.innerText = hexToAscii(equipment.msg.substring(38, 66));
-    td3.innerText = equipment.msg.substring(18, 30).toUpperCase().replace(/(.{2})/g, "$1 ");
-    td4.innerText = equipment.msg.substring(30, 36);
+    td1.innerText = equipment.Client_IP_address;    // IP 地址
+    td2.innerText = hexToAscii(equipment.msg.substring(38, 66));    // 设备名称
+    td3.innerText = equipment.msg.substring(18, 30).toUpperCase().replace(/(.{2})/g, "$1 ");    // MAC 地址
+    td4.innerText = equipment.msg.substring(30, 36);    // 设备序列号
 
     tr.append(td1)
     tr.append(td2)
@@ -25,8 +25,8 @@ function addTableData(equipment, index) {
     devTable.append(tbody)
 }
 
-
-function getEquipment() {
+// 获取设备数据
+function getData() {
     var httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange = function () {
         if (httpRequest.readyState === 4) {
@@ -34,39 +34,45 @@ function getEquipment() {
             var tableItems = document.getElementsByClassName("equipment-table-item");
             Array.from(tableItems).forEach(function (item) {
                 item.remove();
-            })
+            });
 
             var responseData = JSON.parse(httpRequest.responseText);
-            console.log(responseData);
+            // console.log(responseData);
             responseData.forEach((equipment, index) => {
                 // 给table 添加新数据
-                addTableData(equipment, index)
+                addTableData(equipment, index);
                 // out(equipment.msg)
-            })
+            });
 
             // 添加获取参数事件
-            var equipments = document.getElementsByClassName('equipment-table-item');
-            console.log(equipments);
-            Array.from(equipments).forEach(function (item, index) {
-                item.addEventListener('click', function () {
-                    getArgument();
-                });
-            });
+            bindClickEvent();
         }
-    }
+    };
     httpRequest.open('GET', '/equipmentArray');
     httpRequest.send();
     out("指令发送成功 -> FF010102");
     out("点击搜到的设备可读取参数");
 }
 
-document.getElementById('searchBtn').addEventListener('click', getEquipment);
+// 绑定点击事件
+document.getElementById('searchBtn').addEventListener('click', getData);
 
+// 绑定点击事件到设备项
+function bindClickEvent() {
+    var equipments = document.getElementsByClassName('equipment-table-item');
+    console.log(equipments);
+    Array.from(equipments).forEach(function (item, index) {
+        item.addEventListener('click', getArgument);
+    });
+}
 
 // 获取参数请求
 function getArgument() {
+    var mac = this.id;
+    var url = '/argument?mac=' + encodeURIComponent(mac);
+
     var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', '/argument');
+    httpRequest.open('GET', url);
     httpRequest.send();
 }
 
@@ -86,32 +92,40 @@ function computeCrcSum() {
 }
 
 
+/******************************************* 进制转换 **********************************************/
+
+function hexToChars(hexStr) {
+    let bytes = hexStr.replace(/\s/g, '').split('');
+    let chars = bytes.map(byte => String.fromCharCode(parseInt(byte, 16)));
+    return chars.join('');
+}
 
 function hexToAscii(hexString) {
-    let result = "";
-
-    // 遍历字符串中的每两个字符
+    let asciiString = '';
     for (let i = 0; i < hexString.length; i += 2) {
-        // 提取两个字符作为一个十六进制数
-        let hex = hexString.substr(i, 2);
-
-        // 将十六进制数转换为对应的字符，并添加到结果字符串中
-        let decimal = parseInt(hex, 16);
-        result += String.fromCharCode(decimal);
+        const hex = hexString.substr(i, 2);
+        const decimal = parseInt(hex, 16); // 将十六进制转换为十进制
+        asciiString += String.fromCharCode(decimal); // 将十进制转换为字符
     }
-
-    return result;
+    return asciiString;
 }
 
-function getCurrentTime() {
-    let currentDate = new Date();
-    let hours = ("0" + currentDate.getHours()).slice(-2);
-    let minutes = ("0" + currentDate.getMinutes()).slice(-2);
-    let seconds = ("0" + currentDate.getSeconds()).slice(-2);
-
-    return hours + ":" + minutes + ":" + seconds;
+function binaryToStr(str) {
+    var result = [];
+    var list = str.split(" ");
+    for (var i = 0; i < list.length; i++) {
+        var item = list[i];
+        var asciiCode = parseInt(item, 2);
+        var charValue = String.fromCharCode(asciiCode);
+        result.push(charValue);
+    }
+    return result.join("");
 }
 
+/**
+ * 
+ * 输出信息
+ */
 function err(str) // 红色显示错误信息
 {
     var dom = document.getElementById("dat");
@@ -141,4 +155,33 @@ function out(str) // 简单输出消息
         dom.scrollTop = dom.scrollHeight;
     }
     else console.log(str);
+}
+
+// 获取当前时间 00:00:00
+function getCurrentTime() {
+    let currentDate = new Date();
+    let hours = ("0" + currentDate.getHours()).slice(-2);
+    let minutes = ("0" + currentDate.getMinutes()).slice(-2);
+    let seconds = ("0" + currentDate.getSeconds()).slice(-2);
+
+    return hours + ":" + minutes + ":" + seconds;
+}
+
+
+function makeRequest(method, url, callback, errorCallback) {
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = function () {
+        if (httpRequest.readyState === 4) {
+            if (httpRequest.status === 200) {
+                var responseData = JSON.parse(httpRequest.responseText);
+                callback(responseData);
+            } else {
+                if (errorCallback) {
+                    errorCallback(httpRequest.status);
+                }
+            }
+        }
+    };
+    httpRequest.open(method, url);
+    httpRequest.send();
 }

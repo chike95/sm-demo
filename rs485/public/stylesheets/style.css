@@ -13,7 +13,7 @@ a {
 }
 
 .control .equimentList {
-  height: 340px;
+  height: 300px;
 }
 
 .show {
@@ -22,12 +22,19 @@ a {
 }
 
 .cmd {
-  overflow-y: scroll;
+  overflow-y: auto;
   margin: 10px;
   height: 200px;
   background-color: #ccc;
 }
 
-.baseArgument {
+.baseArgument,
+.portArgument {
   text-align: right;
+  padding: 10px;
+}
+
+tr:hover {
+  cursor: pointer;
+  /* 设置光标样式为手型 */
 }

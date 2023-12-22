@@ -10,6 +10,8 @@ router.get('/', function (req, res, next) {
   res.sendFile('index.html', { root: path.join(__dirname, '../views') });
 });
 
+
+/* 获取设备 */
 router.get('/equipmentArray', async function (req, res, next) {
   try {
     await udpServer.getEquipment();
@@ -28,10 +30,22 @@ router.get('/equipmentArray', async function (req, res, next) {
   }
 });
 
+/* 获取参数 */
 router.get('/argument', async function (req, res, next) {
-  // udpServer.getArgument();
-  console.log("get argument");
-  res.send("argument");
+
+  try {
+    const mac_addr = req.query.mac;
+    console.log(mac_addr);
+
+    const argument = await udpServer.getArgument(mac_addr);
+
+    console.log(argument);
+    res.json({ argument });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to get equipment information' });
+  }
+
 });
 
 module.exports = router;
