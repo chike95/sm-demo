@@ -13,8 +13,8 @@
 <body>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-4 col-sm-6 control">
-                <h5>USR-M0 V0.9 -- lxm</h5>
+            <div class="col-md-offset-1 col-md-4 col-sm-6 control">
+                <h5>USR-M0 V0.9</h5>
                 <div class="equimentList">
                     <table id="dev-table" class="table table-striped">
                         <tbody>
@@ -37,46 +37,46 @@
                 </div>
             </div>
             <div class="col-md-5 col-sm-6 show">
-                <h4>基础配置</h4>
+                <h5>基础配置</h5>
                 <div class="baseArgument" style="height: 300px;background-color: #ccd;">
 
                     <div>
                         <div class="col-md-6">
-                            <p><span>IP地址类型: </span><input type="text" /></p>
-                            <p><span>模块静态IP: </span><input type="text" /></p>
-                            <p><span>子网掩码: </span><input type="text" /></p>
-                            <p><span>网关: </span><input type="text" /></p>
-                            <p><span>DNS地址: </span><input type="text" /></p>
-                            <p><span>MAC地址: </span><input type="text" /></p>
-                            <p><span>超时重启: </span><input type="text" /></p>
+                            <p><span>IP地址类型: </span><input type="text" id="eq-ip-type" /></p>
+                            <p><span>模块静态IP: </span><input type="text" id="eq-ip" /></p>
+                            <p><span>子网掩码: </span><input type="text" id="eq-mask" /></p>
+                            <p><span>网关: </span><input type="text" id="eq-gateway" /></p>
+                            <p><span>DNS地址: </span><input type="text" id="eq-dns" /></p>
+                            <p><span>MAC地址: </span><input type="text" id="eq-mac" /></p>
+                            <p><span>超时重启: </span><input type="text" id="eq-restart_time" /></p>
                         </div>
                         <div class="col-md-6">
-                            <p><span>HTTP端口: </span><input type="text" /></p>
-                            <p><span>用户名: </span><input type="text" /></p>
-                            <p><span>密码: </span><input type="text" /></p>
-                            <p><span>设备名称: </span><input type="text" /></p>
+                            <p><span>HTTP端口: </span><input type="text" id="eq-http-port" /></p>
+                            <p><span>用户名: </span><input type="text" id="eq-user" /></p>
+                            <p><span>密码: </span><input type="text" id="eq-password" /></p>
+                            <p><span>设备名称: </span><input type="text" id="eq-name" /></p>
                         </div>
                     </div>
                 </div>
-                <h4>端口配置</h4>
+                <h5>端口配置</h5>
                 <div class="portArgument" style="height: 160px; background-color: #cc5;">
                     <div>
                         <div class="col-md-6">
-                            <p><span>校验: </span><input type="text" /></p>
-                            <p><span>工作方式: </span><input type="text" /></p>
-                            <p><span>目标IP/域名: </span><input type="text" /></p>
-                            <p><span>短连接数: </span><input type="text" /></p>
+                            <p><span>校验: </span><input type="text" id="eq-verify" /></p>
+                            <p><span>工作方式: </span><input type="text" id="eq-work-type" /></p>
+                            <p><span>目标IP/域名: </span><input type="text" id="eq-remote-addr" /></p>
+                            <p><span>短连接时间: </span><input type="text" id="eq-short-link" /></p>
                         </div>
                         <div class="col-md-6">
-                            <p><span>串口波特率: </span><input type="text" /></p>
-                            <p><span>本地端口: </span><input type="text" /></p>
-                            <p><span>远程端口: </span><input type="text" /></p>
-                            <p><span>TCP连接数: </span><input type="text" /></p>
+                            <p><span>串口波特率: </span><input type="text" id="eq-baud" /></p>
+                            <p><span>本地端口: </span><input type="text" id="eq-local-port" /></p>
+                            <p><span>远程端口: </span><input type="text" id="eq-remote-port" /></p>
+                            <p><span>TCP连接数: </span><input type="text" id="eq-tcp-links" /></p>
                         </div>
                     </div>
                 </div>
 
-                <button type="button" class="btn btn-success" style="width: 100%;"> 保 存 参 数</button>
+                <button type="button" id="saveBtn" class="btn btn-success" style="width: 100%;"> 保 存 参 数</button>
             </div>
         </div>
 

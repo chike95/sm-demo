@@ -23,6 +23,7 @@ router.get('/equipmentArray', async function (req, res, next) {
         msg: item.msg
       })
     })
+    console.log(result);
     res.json(result);
   } catch (error) {
     console.error(error);
@@ -35,17 +36,29 @@ router.get('/argument', async function (req, res, next) {
 
   try {
     const mac_addr = req.query.mac;
-    console.log(mac_addr);
+    // console.log(mac_addr);
 
     const argument = await udpServer.getArgument(mac_addr);
 
-    console.log(argument);
+    // console.log(argument);
     res.json({ argument });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Failed to get equipment information' });
   }
+});
 
+/* 参数设置 */
+router.post('/settings', function (req, res, next) {
+  console.log(req.body); // 输出参数值
+
+  const baseOrder = req.body.base_order;
+  const serialOrder = req.body.serial_order;
+  const mac = req.body.mac;
+
+  udpServer.editArgument(baseOrder, serialOrder, mac);
+  // udpServer.restartEquipment(mac)
+  res.json({ title: '参数保存成功,请重启项目' });
 });
 
 module.exports = router;

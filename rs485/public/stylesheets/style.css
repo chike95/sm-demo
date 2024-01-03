@@ -3,6 +3,7 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
+
 a {
   color: #00B7FF;
 }
@@ -13,7 +14,9 @@ a {
 }
 
 .control .equimentList {
+  overflow-y: auto;
   height: 300px;
+  margin: 10px;
 }
 
 .show {
@@ -25,6 +28,7 @@ a {
   overflow-y: auto;
   margin: 10px;
   height: 200px;
+  word-wrap: break-word;
   background-color: #ccc;
 }
 
@@ -37,4 +41,8 @@ a {
 tr:hover {
   cursor: pointer;
   /* 设置光标样式为手型 */
+}
+
+#selected {
+  background-color: rgb(189, 189, 201);
 }

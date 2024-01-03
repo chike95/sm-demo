@@ -35,16 +35,20 @@ server.bind(UDP_PORT, UDP_HOST)
 
 
 /******************************  **********************************/
-// 4.3 广播搜索设备
+//  广播搜索设备
 function getEquipment() {
+    console.log(equipmentArray);
     return new Promise((resolve, reject) => {
         const message = Buffer.from('ff010102', 'hex');
         server.send(message, 1500, '255.255.255.255');
 
+
         server.on('message', (msg, remoteInfo) => {
             remoteInfo.msg = msg.toString("hex");
-            addEquipment(remoteInfo);
-            // console.log(equipmentArray);
+            // console.log(remoteInfo);
+            if (remoteInfo.msg.startsWith('ff2401')) {
+                addEquipment(remoteInfo);
+            }
             resolve(equipmentArray);
         });
     });
@@ -59,14 +63,14 @@ function addEquipment(dev) {
     equipmentArray.push(dev); // 添加设备到列表
 }
 
-// 5.3 获取参数
+// 获取参数
 function getArgument(macAddress) {
     let str = "1303" + macAddress + "61646D696E0061646D696E00";
-    console.log(str);
+    // console.log(str);
     let order = "ff" + str + computeCrcSum(str);
-    console.log(order);
+    // console.log(order);
     const message = Buffer.from(order, 'hex');
-    console.log(message);
+    // console.log(message);
 
     return new Promise((resolve, reject) => {
         // 注册message事件监听器，并封装成Promise对象
@@ -75,6 +79,7 @@ function getArgument(macAddress) {
                 const argument = {};
                 argument.addr = remoteInfo.address;
                 argument.msg = msg.toString("hex");
+                argument.mac = msg.toString("hex").substring(18, 30);
                 resolve(argument);
             }
         });
@@ -87,15 +92,47 @@ function getArgument(macAddress) {
     });
 }
 
-// 添加参数
-// function addArgument(argument) {
-//     const index = argumentArray.findIndex(item => item.addr === argument.addr && item.port === argument.port && argument.msg);
-//     if (index !== -1) {
-//         argumentArray.splice(index, 1); // 删除已存在的设备
-//     }
-//     argumentArray.push(argument); // 添加设备到列表
-// }
+// 6 保存参数
+function editArgument(base, serial, mac) {
+    // 基础配置
+    const baseMessage = Buffer.from(base, 'hex');
+    server.send(baseMessage, 1500, '255.255.255.255', (err) => {
+        if (err) {
+            reject(err);
+        }
+    });
 
+    // 串口配置
+    const serialMessage = Buffer.from(serial, 'hex');
+    server.send(serialMessage, 1500, '255.255.255.255', (err) => {
+        if (err) {
+            reject(err);
+        }
+    });
+
+
+    restartEquipment(mac);
+    equipmentArray = [];
+    console.log(equipmentArray);
+    // getData();
+}
+
+function restartEquipment(macAddress) {
+    let str = "1302" + macAddress + "61646D696E0061646D696E00";
+    str = str.replace(/\s/g, "")
+    console.log(str);
+    let order = "ff" + str + computeCrcSum(str);
+    console.log(order);
+    const message = Buffer.from(order, 'hex');
+    console.log(message);
+
+    server.send(message, 1500, '255.255.255.255');
+
+    server.on('message', (msg, rinfo) => {
+        // 打印接收到的消息和发送者信息
+        console.log(`received message from ${rinfo.address}:${rinfo.port}: ${msg}`);
+    });
+}
 
 // 计算校验和
 function computeCrcSum(hexString) {
@@ -109,10 +146,12 @@ function computeCrcSum(hexString) {
     // console.log(sum.toString(16).toUpperCase().slice(-2));
     return sum.toString(16).toUpperCase().slice(-2);
 }
-computeCrcSum("FF13039ca525a3fe3861646D696E0061646D696E00")
+
 module.exports = {
     equipmentArray: equipmentArray,
     getEquipment: getEquipment,
     getArgument: getArgument,
     addEquipment: addEquipment,
+    editArgument: editArgument,
+    restartEquipment: restartEquipment,
 }
